@@ -84,10 +84,10 @@ public class CashRegisterForm {
                     receiptArea.append("----------------------------------------------------\n");
                 }
 
-                receiptArea.append(lastClickedProduct.getName() + "                        "
-                        + quantity + "*" + "       " + lastClickedProduct.getPrice() + "kr" + " = " +
+                receiptArea.append(lastClickedProduct.getName() + "                       "
+                        + quantity + "*" + "      " + lastClickedProduct.getPrice() + "kr" + " = " +
                         lastClickedProduct.getPrice() * quantity + "kr\n");
-                receiptArea.append("                              " + "Moms (" + lastClickedProduct.getVat() + "%): " + lastClickedProduct.getPrice() * lastClickedProduct.getVat() / 100 * quantity + "kr\n" );
+                receiptArea.append("                                " + "Moms (" + lastClickedProduct.getVat() + "%): " + lastClickedProduct.getPrice() * lastClickedProduct.getVat() / 100 * quantity + "kr\n" );
                 summa = summa + (quantity * lastClickedProduct.getPrice());
 
             }
