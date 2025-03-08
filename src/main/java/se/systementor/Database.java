@@ -5,25 +5,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-    String url = "jdbc:mysql://localhost:3306/northwind";
+    String url = "jdbc:mysql://localhost:3306/edusshop";
     String user = "root";
-    String password = "hejsan123";
+    String password = "Enamorados17";
 
 
     protected Connection getConnection() throws SQLException {
         return DriverManager.getConnection(url,user,password);
     }
 
-    public List<String> activeProducts(){
-        ArrayList<String> products = new ArrayList<String>();
+    public List<Product> activeProducts(){
+        ArrayList<Product> products = new ArrayList<Product>();
 
         try {
             Connection conn = getConnection();
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT ProductName FROM Products WHERE discontinued=0");
+            ResultSet rs = stmt.executeQuery("SELECT ProductID, name, price, vat FROM Product");
 
             while (rs.next()) {
-                products.add(rs.getString("ProductName"));
+                Product product = new Product();
+                product.setProductID(rs.getInt("ProductID"));
+                product.setName(rs.getString("Name"));
+                product.setPrice(rs.getDouble("price"));
+                product.setVat(rs.getDouble("vat"));
+                products.add(product);
             }
 
             rs.close();
@@ -34,5 +39,28 @@ public class Database {
         }
         return products;
     }
+
+    public int createOrder(double totalPrice) {
+        int OrderDetailsID = -1;
+        String sql = "INSERT INTO OrderDetails (total_price) VALUES (?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setDouble(1, totalPrice);
+            pstmt.executeUpdate();
+
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                OrderDetailsID = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return OrderDetailsID;
+    }
+
+
+
 
 }

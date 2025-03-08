@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class CashRegisterForm {
     private JPanel panel1;
@@ -16,25 +18,77 @@ public class CashRegisterForm {
     private JButton addButton;
     private JButton payButton;
     private Database database = new Database();
+    private Product lastClickedProduct = null;
+    private double summa = 0.0;
+    private int quantity;
+
 
     public CashRegisterForm() {
-        for (String name : database.activeProducts()) {
-            JButton button = new JButton(name);
+        for (Product product : database.activeProducts()) {
+            JButton button = new JButton(product.getName());
             buttonsPanel.add(button);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    lastClickedProduct = product;
+                    textField1.setText(product.getName());
+                }
+            });
         }
-        addButton.addActionListener(new ActionListener() {
+        payButton.addActionListener(new ActionListener() { //betalning
             @Override
             public void actionPerformed(ActionEvent e) {
-                receiptArea.append("                     STEFANS SUPERSHOP\n");
-                receiptArea.append("----------------------------------------------------\n");
+
+                if (summa == 0.0) {
+                    JOptionPane.showMessageDialog(null, "Inga varor i kvittot!", "Fel", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+
                 receiptArea.append("\n");
-                receiptArea.append("Kvittonummer: 122        Datum: 2024-09-01 13:00:21\n");
                 receiptArea.append("----------------------------------------------------\n");
-                receiptArea.append("Kaffe Gevalia           5 *     51.00    =   255.00  \n");
-                receiptArea.append("Nallebjörn              1 *     110.00   =   110.00  \n");
-                receiptArea.append("Total                                        ------\n");
-                receiptArea.append("                                             306.00\n");
-                receiptArea.append("TACK FÖR DITT KÖP\n");
+              //  receiptArea.append("Total                                        -------\n");
+                receiptArea.append("Total                                        "+ summa +"kr\n");
+                receiptArea.append("----------------------------------------------------\n");
+                receiptArea.append("                  TACK FÖR DITT KÖP\n");
+                receiptArea.append("----------------------------------------------------\n");
+
+
+                lastClickedProduct = null;
+                summa = 0.0;
+            }
+        });
+        addButton.addActionListener(new ActionListener() { // ADD
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                if (lastClickedProduct == null) {
+                    JOptionPane.showMessageDialog(null, "Välj en produkt först!", "Fel", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                try {
+                    quantity = Integer.parseInt(textField2.getText());
+                } catch (NumberFormatException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+                if(summa == 0)  {
+
+                    receiptArea.append("                EDUS SUPER MEGA SHOP\n");
+                    receiptArea.append("----------------------------------------------------\n");
+                    receiptArea.append("\n");
+                    int OrderDetailsID = database.createOrder(summa);
+                    Date d = new Date();
+                    receiptArea.append("Kvittonummer: " + OrderDetailsID + " Datum: " + d.toString() + "\n");
+                    receiptArea.append("\n");
+                    receiptArea.append("----------------------------------------------------\n");
+                }
+
+                receiptArea.append(lastClickedProduct.getName() + "                        "
+                        + quantity + "*" + "       " + lastClickedProduct.getPrice() + "kr" + " = " +
+                        lastClickedProduct.getPrice() * quantity + "kr\n");
+                receiptArea.append("                              " + "Moms (" + lastClickedProduct.getVat() + "%): " + lastClickedProduct.getPrice() * lastClickedProduct.getVat() / 100 * quantity + "kr\n" );
+                summa = summa + (quantity * lastClickedProduct.getPrice());
 
             }
         });

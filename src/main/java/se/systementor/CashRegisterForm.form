@@ -41,6 +41,10 @@
                   <columns value="2"/>
                 </properties>
               </component>
+              <component id="cbf97" class="javax.swing.JSeparator">
+                <constraints/>
+                <properties/>
+              </component>
               <component id="c8a7e" class="javax.swing.JButton" binding="addButton" default-binding="true">
                 <constraints/>
                 <properties>
