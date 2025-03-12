@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.TimerTask;
 
 public class CashRegisterForm {
     private JPanel panel1;
@@ -52,9 +53,16 @@ public class CashRegisterForm {
                 receiptArea.append("                  TACK FÖR DITT KÖP\n");
                 receiptArea.append("----------------------------------------------------\n");
 
+                Timer timer = new Timer(3000,e1 -> {
+                    receiptArea.setText("");
 
-                lastClickedProduct = null;
-                summa = 0.0;
+                    lastClickedProduct = null;
+                    summa = 0.0;
+                });
+                timer.setRepeats(false);
+                timer.start();
+
+
             }
         });
         addButton.addActionListener(new ActionListener() { // ADD
