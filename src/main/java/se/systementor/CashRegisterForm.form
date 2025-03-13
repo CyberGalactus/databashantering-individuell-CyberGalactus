@@ -27,6 +27,10 @@
                 <constraints/>
                 <properties>
                   <columns value="30"/>
+                  <inheritsPopupMenu value="true"/>
+                  <maximumSize width="100" height="100"/>
+                  <opaque value="true"/>
+                  <preferredSize width="336" height="34"/>
                 </properties>
               </component>
               <component id="f6e3a" class="javax.swing.JLabel">
