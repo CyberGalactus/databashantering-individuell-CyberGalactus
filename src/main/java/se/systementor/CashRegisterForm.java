@@ -1,9 +1,23 @@
 package se.systementor;
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.HttpStatusCode;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.utils.Validate;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
+
+
 
 public class CashRegisterForm {
     private JPanel panel1;
@@ -40,6 +54,7 @@ public class CashRegisterForm {
 
     private String AccessKey = System.getenv("AWS_ACCESS_KEY_ID");
     private String SecretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
+    String bucketName = "educhitest-cuchi9182737465"; //Ange ngt unikt !!!
 
 
 
@@ -129,8 +144,9 @@ public class CashRegisterForm {
         StatistikButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                S3Client s3Client;
 
-                //terminalens miljövariabler laddades inte in automatiskt. när jag skrev
+                //Terminalens miljövariabler laddades inte in automatiskt. när jag skrev
                 // det här
                 System.out.println("AWS_ACCESS_KEY_ID: " + AccessKey);
                 System.out.println("AWS_SECRET_ACCESS_KEY: " + SecretKey);
@@ -138,11 +154,55 @@ public class CashRegisterForm {
                 // open -a "IntelliJ IDEA"
                 //---------------------------------------------------
                 // Nu ger System.getenv("AWS_ACCESS_KEY_ID") rätt värde!
+                String xml = database.RecieptStatistic();
+                System.out.println(xml);
+                //jag skriver ut i terminalen för att se om det funkar och det gör det
+                // XML -> S3
 
+                s3Client = S3Client.builder().
+                        credentialsProvider(new AwsCredentialsProvider() {
+                            @Override
+                            public AwsCredentials resolveCredentials() {
+                                return AwsBasicCredentials.builder().accessKeyId(AccessKey).secretAccessKey(SecretKey).build();
+                            }
+                        })
+                        .region(Region.EU_NORTH_1)
+                        .build();
 
+                if(!doesBucketExist(bucketName,s3Client)){
+                    CreateBucketRequest bucketRequest = CreateBucketRequest.builder()
+                            .bucket(bucketName)
+                            .build();
+                    s3Client.createBucket(bucketRequest);
+                }else{
+                }
 
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key("statitic.xml")
+                        .build();
+
+                s3Client.putObject(objectRequest, RequestBody.fromString(xml));
             }
         });
+    }
+
+    public static boolean doesBucketExist(String bucketName, S3Client s3SyncClient) {
+        try {
+            Validate.notEmpty(bucketName, "The bucket name must not be null or an empty string.", "");
+            s3SyncClient.getBucketAcl(r -> r.bucket(bucketName));
+            return true;
+        } catch (AwsServiceException ase) {
+            // A redirect error or an AccessDenied exception means the bucket exists but it's not in this region
+            // or we don't have permissions to it.
+            if ((ase.statusCode() == HttpStatusCode.MOVED_PERMANENTLY) || "AccessDenied".equals(ase.awsErrorDetails().errorCode())) {
+                return true;
+            }
+            if (ase.statusCode() == HttpStatusCode.NOT_FOUND) {
+                return false;
+            }
+            throw ase;
+        }
     }
 
     public void run() {

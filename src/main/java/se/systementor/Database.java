@@ -60,30 +60,43 @@ public class Database {
         return OrderDetailsID;
     }
 
-    public int RecieptStatistic() {
+    public String RecieptStatistic() {
+        String xml="";
         ReceiptRows receiptRows = new ReceiptRows();
         String sql = "SELECT COUNT(*) as total," +
                 "MIN(OrderDate) as FirstOrderDateTime," +
                 "MAX(OrderDate) as LastOrderDateTime," +
                 "SUM(total_price) as TotalSalesInclVat," +
                 "SUM(total_price*0.25) as TotalVat " +
-                "FRON OrderdDetails";
+                "FROM OrderDetails ";// +
+                //"WHERE DATE(OrderDate) = CURDATE()";
         try {
             Connection conn = getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
+
             if(rs.next()){
                 int total = rs.getInt("total");
                 String FirstOrderDateTime = rs.getString("FirstOrderDateTime");
                 String LastOrderDateTime = rs.getString("LastOrderDateTime");
                 double TotalSalesInclVat = rs.getInt("TotalSalesInclVat");
                 double TotalVat = rs.getDouble("TotalVat");
+
+                xml = "<xml>\n" +
+                        "<SaleStatistics>\n" +
+                        "<FirstOrderDateTime>" + FirstOrderDateTime + "</FirstOrderDateTime>\n" +
+                        "\t<LastOrderDateTime>" + LastOrderDateTime + "</LastOrderDateTime>\n" +
+                        "\t<TotalSalesInclVat>" + TotalSalesInclVat + "</TotalSalesInclVat>\n" +
+                        "\t<TotalVat>" + TotalVat + "</TotalVat>\n" +
+                        "\t<TotalNumberOfReceipts>" + total +"</TotalNumberOfReceipts>\n" +
+                        "</SaleStatistics>\n" +
+                        "</xml>\n";
             }
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        return xml;
     }
 
 
