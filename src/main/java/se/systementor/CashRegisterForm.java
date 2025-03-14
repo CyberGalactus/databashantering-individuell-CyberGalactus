@@ -34,23 +34,6 @@ public class CashRegisterForm {
     private Product lastClickedProduct = null;
     private double summa = 0.0;
     private int quantity;
-    //mina AWS Access Key och Secret Key var synliga i koden,
-    // vilket är en stor säkerhetsrisk. Dessa nycklar kan användas av obehöriga för att få åtkomst till ditt AWS-konto.
-    //---------------------------------------------------
-    //steg 1 i terminalen
-    //export AWS_ACCESS_KEY_ID="AKIAQQABDNYHEOVTNEBE"
-    //export AWS_SECRET_ACCESS_KEY="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"
-    //---------------------------------------------------
-    //steg 2 för att verifera att det används medans terminalen är öppen
-    //printenv | grep AWS
-    // om allt fungerar så der man det här i terminalen
-    //AWS_ACCESS_KEY_ID=AKIAQQABDNYHEOVTNEBE
-    //AWS_SECRET_ACCESS_KEY=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
-    //---------------------------------------------------
-    //Gör nycklarna permanenta även när man stänger terminalen --- har inte gjort
-    //echo 'export AWS_ACCESS_KEY_ID="AKIAQQABDNYHEOVTNEBE"' >> ~/.zshrc
-    //echo 'export AWS_SECRET_ACCESS_KEY="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"' >> ~/.zshrc
-    //source ~/.zshrc
 
     private String AccessKey = System.getenv("AWS_ACCESS_KEY_ID");
     private String SecretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
