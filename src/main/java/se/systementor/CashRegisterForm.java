@@ -1,12 +1,9 @@
 package se.systementor;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.TimerTask;
 
 public class CashRegisterForm {
     private JPanel panel1;
@@ -18,6 +15,7 @@ public class CashRegisterForm {
     private JTextField textField2;
     private JButton addButton;
     private JButton payButton;
+    private JButton StatistikButton;
     private Database database = new Database();
     private Product lastClickedProduct = null;
     private double summa = 0.0;
@@ -39,6 +37,7 @@ public class CashRegisterForm {
     //echo 'export AWS_ACCESS_KEY_ID="AKIAQQABDNYHEOVTNEBE"' >> ~/.zshrc
     //echo 'export AWS_SECRET_ACCESS_KEY="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"' >> ~/.zshrc
     //source ~/.zshrc
+
     private String AccessKey = System.getenv("AWS_ACCESS_KEY_ID");
     private String SecretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
 
@@ -56,18 +55,10 @@ public class CashRegisterForm {
                 }
             });
         }
-        JButton buttonStat = new JButton("Dagsstatistik");
-        buttonsPanel.add(buttonStat);
-//        buttonStat
+//        JButton buttonStat = new JButton("Dagsstatistik");
+//        buttonsPanel.add(buttonStat);
 
-        //terminalens miljövariabler laddades inte in automatiskt. när jag skrev
-        // det här
-        System.out.println("AWS_ACCESS_KEY_ID: " + AccessKey);
-        System.out.println("AWS_SECRET_ACCESS_KEY: " + SecretKey);
-        // jag stände intelij helt och skrev i min öppna teminal
-        // open -a "IntelliJ IDEA"
-        //---------------------------------------------------
-        // Nu ger System.getenv("AWS_ACCESS_KEY_ID") rätt värde!
+
 
 
         payButton.addActionListener(new ActionListener() { //betalning
@@ -135,6 +126,23 @@ public class CashRegisterForm {
 
             }
         });
+        StatistikButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                //terminalens miljövariabler laddades inte in automatiskt. när jag skrev
+                // det här
+                System.out.println("AWS_ACCESS_KEY_ID: " + AccessKey);
+                System.out.println("AWS_SECRET_ACCESS_KEY: " + SecretKey);
+                // jag stände intelij helt och skrev i min öppna teminal
+                // open -a "IntelliJ IDEA"
+                //---------------------------------------------------
+                // Nu ger System.getenv("AWS_ACCESS_KEY_ID") rätt värde!
+
+
+
+            }
+        });
     }
 
     public void run() {
@@ -148,7 +156,6 @@ public class CashRegisterForm {
 
 
         frame.setVisible(true);
-
 
 
     }

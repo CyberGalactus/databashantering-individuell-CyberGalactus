@@ -60,6 +60,33 @@ public class Database {
         return OrderDetailsID;
     }
 
+    public int RecieptStatistic() {
+        ReceiptRows receiptRows = new ReceiptRows();
+        String sql = "SELECT COUNT(*) as total," +
+                "MIN(OrderDate) as FirstOrderDateTime," +
+                "MAX(OrderDate) as LastOrderDateTime," +
+                "SUM(total_price) as TotalSalesInclVat," +
+                "SUM(total_price*0.25) as TotalVat " +
+                "FRON OrderdDetails";
+        try {
+            Connection conn = getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            if(rs.next()){
+                int total = rs.getInt("total");
+                String FirstOrderDateTime = rs.getString("FirstOrderDateTime");
+                String LastOrderDateTime = rs.getString("LastOrderDateTime");
+                double TotalSalesInclVat = rs.getInt("TotalSalesInclVat");
+                double TotalVat = rs.getDouble("TotalVat");
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
 
 
 

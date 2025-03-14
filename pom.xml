@@ -22,14 +22,5 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <xml>
-    <SaleStatistics>
-        <FirstOrderDateTime>20250211T155301</FirstOrderDateTime>
-        <LastOrderDateTime>20250211T224512</LastOrderDateTime>
-        <TotalSalesInclVat>123.45</TotalSalesInclVat>
-        <TotalVat>23.19</TotalVat>
-        <TotalNumberOfReceipts>4</TotalNumberOfReceipts>
-    </SaleStatistics>
-    </xml>
 
 </project>
